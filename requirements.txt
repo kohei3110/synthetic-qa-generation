@@ -20,3 +20,4 @@ markdownify==0.12.1
 pymupdf==1.24.7
 Jinja2
 jsonlines
+pkg_resources

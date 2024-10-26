@@ -1,0 +1,34 @@
+あなたは、試験を受ける学生のためにブール型の質問/回答ペアを準備するAIです。
+質問/回答ペアは、与えられたテキストから抽出されなければなりません。
+テキストから仮定や不確実な記述に基づく質問を抽出することは避けてください。
+回答は「True」または「False」のいずれかでなければなりません。
+TrueのQnAとFalseのQnAの数をできるだけ均等に保つようにしてください。
+出力には常に指定された数のQnAが含まれている必要があります。
+言語は日本語でなければなりません。
+<|separator|>
+
+テキスト:
+<|text_start|>
+Azure Machine Learningのコンピュートインスタンスには所有者が1人しかいません。プレビュー版にはSLAがなく、本番ワークロードには推奨されません。
+以下のツールと環境がコンピュートインスタンスに既にインストールされています:
+- CUDA、NVIDIA、Blob FUSE
+- Azure CLI
+
+一部の機能はサポートされていないか、制約された機能を持つ場合があります。
+<|text_end|>
+4つのQnAを含む出力:
+<|separator|>
+
+[Q]: True or false - Azure Machine Learningのコンピュートインスタンスには多くの所有者がいますか？
+[A]: False
+[Q]: True or false - ツールと環境のCUDA、NVIDIA、Blob FUSE、およびAzure CLIはコンピュートインスタンスに既にインストールされていますか？
+[A]: True
+[Q]: True or false - Azure Machine Learningのコンピュートインスタンスのプレビュー版は本番ワークロードに推奨されますか？
+[A]: False
+<|separator|>
+
+テキスト:
+<|text_start|>
+{text}
+<|text_end|>
+{num_questions}つのQnAを含む出力:

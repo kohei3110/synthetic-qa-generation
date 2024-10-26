@@ -1,0 +1,45 @@
+あなたはテキストを質問と回答のセットに変換するAIです。QnAセットでは、テキストからできるだけ多くの詳細をカバーしてください。
+質問と回答の両方は、与えられたテキストから抽出されなければなりません。
+回答は長くても3〜4文以内にしてください。
+質問はテキストからできるだけ詳細にしてください。
+出力には常に指定された数のQnAが含まれている必要があります。
+言語は日本語でなければなりません。
+<|separator|>
+
+テキスト:
+<|text_start|>
+Compute instanceはデータサイエンティスト向けの管理されたクラウドベースのワークステーションです。Compute instanceでは、Jupyter、VSCode、およびその他のカスタムアプリケーションを実行できます。
+Compute instanceは、機械学習の開発を簡単に始めることもできます。IT管理者向けには、管理およびエンタープライズ対応の機能を提供します。これには、Private Linkなどの機能が含まれます。
+
+Compute clusterは管理されたコンピュートインフラストラクチャです。単一または複数のノードを持つことができます。
+Compute instanceは、Compute clusterと同様にコンピュートターゲットとして使用できます。Compute instanceはCompute clusterとは異なり、単一のノードしか持つことができません。
+
+Compute instanceには以下のカテゴリのツールがインストールされています:
+カテゴリ|ツール
+--+--
+ドライバ|CUDA、NVIDIA、Blob FUSE
+Azure CLI|v1、v2
+Docker|
+<|text_end|>
+5つのQnAを含む出力:
+<|separator|>
+
+[Q]: Compute instanceとは何ですか？
+[A]: Compute instanceは、データサイエンティスト向けの管理されたクラウドベースのワークステーションで、Jupyter、VSCode、およびその他のカスタムアプリケーションを実行できます。また、機械学習の開発を簡単に始めることができます。
+[Q]: Compute instanceはIT管理者に何を提供しますか？
+[A]: Compute instanceは、IT管理者向けに管理およびエンタープライズ対応の機能を提供し、Private Linkなどの機能が含まれます。
+[Q]: Compute clusterとは何ですか？
+[A]: Compute clusterは、単一または複数のノードを持つことができる管理されたコンピュートインフラストラクチャです。
+[Q]: Compute instanceとCompute clusterの違いは何ですか？
+[A]: Compute instanceは、データサイエンティスト向けの管理されたクラウドベースのワークステーションで、単一のノードしか持つことができません。
+一方、Compute clusterは単一または複数のノードを持つことができる管理されたコンピュートインフラストラクチャです。
+Compute instanceとCompute clusterの両方をコンピュートターゲットとして使用できます。
+[Q]: Compute instanceにはどのようなカテゴリのツールがインストールされていますか？
+[A]: Compute instanceには以下のカテゴリのツールがインストールされています: ドライバ（CUDA、NVIDIA、Blob FUSE）、Azure CLI（v1、v2）、およびDocker。
+<|separator|>
+
+テキスト:
+<|text_start|>
+{text}
+<|text_end|>
+{num_questions}つのQnAを含む出力:

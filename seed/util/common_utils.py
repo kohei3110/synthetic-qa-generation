@@ -83,7 +83,15 @@ def convert_to_oai_format(qa_pair, system_prompt_msg="You're an AI assistant tha
         return None
 
 
+def convert_to_jsonl_format(data):
+    transformed_data = []
+    for qa_pair in data:
+        question, answer = qa_pair
+        transformed_data.append({"question": question, "ground_truth": answer})
+    return transformed_data
+
+
 def save_jsonl(dictionary_data, file_path):
-    with open(file_path, 'w', encoding='UTF-8-sig') as f:
+    with open(file_path, 'w', encoding='UTF-8') as f:
         for entry in dictionary_data:
             f.write(json.dumps(entry, ensure_ascii=False) + "\n")
