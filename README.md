@@ -1,111 +1,101 @@
-# Generate Synthetic QnAs from Real-world Data 
+# 実世界データから合成QnAを生成する
 
-## Overview
-For LLM/SLM fine-tuning, RAG, or evaluation, it is often necessary to generate data in Q&A format from real-world raw data. However, in scenarios where you need to create a dataset from scratch, rather than from a ready-made dataset, you will face many challenges.
+## 概要
+LLM/SLMのファインチューニング、RAG、または評価のために、実世界の生データからQ&A形式のデータを生成する必要があることがよくあります。しかし、既製のデータセットからではなく、ゼロからデータセットを作成する必要がある場合、多くの課題に直面します。
 
-This hands-on lab aims to alleviate some of that headache by demonstrating how to create/augment a QnA dataset from complex unstructured data, assuming a real-world scenario. The sample aims to be step-by-step for developers and data scientists, as well as those in the field, to try it out with a little help.
+このハンズオンラボは、複雑な非構造化データからQnAデータセットを作成/拡張する方法を示すことで、その負担を軽減することを目的としています。サンプルは、開発者やデータサイエンティスト、そしてフィールドの人々が少しの助けを借りて試してみることができるように、ステップバイステップで進めることを目指しています。
 
-## Scenario
+## シナリオ
 
-### Overview
-We aims to enhance the model's performance by fine-tuning/RAG (Retrieval-Augmented Generation), providing a high-quality dataset. However, no pre-existing dataset is provided; we only have unprocessed raw data in formats such as PDF, CSV, and TXT. This raw data consists of a mixture of images, tables, and text.
+### 概要
+モデルのパフォーマンスを向上させるために、ファインチューニング/RAG（Retrieval Augmented Generation）を行い、高品質なデータセットを提供します。しかし、既存のデータセットは提供されておらず、PDF、CSV、TXTなどの形式の未処理の生データしかありません。この生データには、画像、表、テキストが混在しています。
 
-#### Stage 1. Constructing a seed dataset 
-The task is to preprocess and convert this heterogeneous data into a structured format suitable for fine-tuning or RAG. This involves extracting and cleaning text from various file formats, converting tables and images to text using Azure AI Services if necessary. This dataset is used as a seed dataset for fine tuning or RAG and is used as a baseline to improve the performance of domain-specific use cases.
+#### ステージ1. シードデータセットの構築
+このタスクは、異種データをファインチューニングやRAGに適した構造化形式に前処理して変換することです。これには、さまざまなファイル形式からテキストを抽出してクリーニングし、必要に応じてAzure AIサービスを使用して表や画像をテキストに変換することが含まれます。このデータセットは、ファインチューニングやRAGのためのシードデータセットとして使用され、ドメイン固有のユースケースのパフォーマンスを向上させるためのベースラインとして使用されます。
 
-#### Stage 2. Data Augmentation (Optional)
-After fine-tuning with the generated dataset, a baseline was established, but the performance requires improvement due to lack of data (e.g., there are only 1,000 samples in the dataset). In this case, a synthetic dataset must be created by applying data augmentation techniques to enhance performance. The data augmentation technique utilizes the representative techniques announced by Microsoft: Evol-Instruct, GLAN (Generalized Instruction Tuning), and Auto Evol-Insruct.
+#### ステージ2. データ拡張（オプション）
+生成されたデータセットでファインチューニングを行った後、ベースラインが確立されましたが、データが不足しているため（例：データセットにサンプルが1,000個しかない）、パフォーマンスの向上が必要です。この場合、データ拡張技術を適用して合成データセットを作成し、パフォーマンスを向上させる必要があります。データ拡張技術は、Microsoftが発表した代表的な技術であるEvol-Instruct、GLAN（Generalized Instruction Tuning）、およびAuto Evol-Instructを利用します。
 
-### Customer application examples
-Below is a comparison of the results before and after fine tuning of GPT-4o without RAG for customer PoC. GPT-4o is available to a small number of customers as a private preview as of July 2024. This is the result of creating a set of 16 questions and answers for PoC and comparing three indicators of **Similarity, Coherence, and Fluency** in Azure AI studio. The values ​​of the indicator are on a scale of 1-5, with higher values ​​being better.
+### 実際のアプリケーションの例
+以下は、RAGなしでGPT-4oのファインチューニング前後の結果をお客様のPoCで比較したものです。GPT-4oは2024年7月現在、少数のお客様にプライベートプレビューとして提供されています。これは、PoCのために16の質問と回答のセットを作成し、Azure AIスタジオで**類似性、一貫性、流暢さ**の3つの指標を比較した結果です。指標の値は1-5のスケールで、高い値が良いことを示します。
 
 ![evaluation-sample](./imgs/evaluation-sample.png)
 
-## Requirements
-Before starting, you have met the following requirements:
+## 要件
+開始する前に、以下の要件を満たしていることを確認してください：
 
-- Access to Azure OpenAI Service - you can apply for access [here](https://go.microsoft.com/fwlink/?linkid=2222006)
-- An Azure AI Studio project - go to [aka.ms/azureaistudio](https://aka.ms/azureaistudio) to create a project
-- Azure AI Document Intelligence (v4.0 - 2024-02-29 preview) - Find out more [here](https://learn.microsoft.com/en-us/azure/ai-services/document-intelligence/overview?view=doc-intel-4.0.0)
+- Azure OpenAIサービスへのアクセス - [こちら](https://go.microsoft.com/fwlink/?linkid=2222006)からアクセスを申請できます
+- Azure AI Studioプロジェクト - [aka.ms/azureaistudio](https://aka.ms/azureaistudio)にアクセスしてプロジェクトを作成します
+- Azure AI Document Intelligence（v4.0 - 2024-02-29プレビュー） - 詳細は[こちら](https://learn.microsoft.com/en-us/azure/ai-services/document-intelligence/overview?view=doc-intel-4.0.0)をご覧ください
 
-Please do not forget to modify the `.env` file to match your account. Rename `.env.sample` to `.env` or copy and use it
+アカウントに合わせて`.env`ファイルを変更することを忘れないでください。`.env.sample`を`.env`にリネームするか、コピーして使用してください。
 
-## Contents
+## コンテンツ
 
-### Stage 1. Constructing a seed dataset 
+### ステージ1. シードデータセットの構築
 ![diagram1](./imgs/diagram1.png)
 
-Convert the given raw data into data that can be used for model training/RAG/evaluation using Azure OpenAI GPT-4o. `make_qa_multimodal_pdf_docai.ipynb` is most recommended. However, if you feel that the logic of this code is complicated, or if your file content consists only of images or text, please try looking at other Jupyter notebooks first.
-Run the Jupyter notebook in the **[seed](seed)** folder.
+Azure OpenAI GPT-4oを使用して、与えられた生データをモデルトレーニング/RAG/評価に使用できるデータに変換します。`make_qa_multimodal_pdf_docai.ipynb`が最も推奨されます。ただし、このコードのロジックが複雑だと感じる場合や、ファイルの内容が画像やテキストのみで構成されている場合は、他のJupyterノートブックを先に試してみてください。
+**[seed](seed)**フォルダー内のJupyterノートブックを実行します。
 
 #### PDF
-- `make_qa_multimodal_pdf_docai.ipynb`: (Recommended) Generate QnA synthetic dataset from a Complex PDF using Azure AI Document Intelligence.
-- `make_qa_multimodal_pdf_oss.ipynb`:  Generate QnA synthetic dataset from a Complex PDF using Open source (Unstructured toolkit for this hands-on). To run this file, you first need to install the required packages with `startup_unstructured.sh`. The installation will take a few minutes.
-- `make_qa_only_image_multiple_pdf.ipynb`: Generate QnA synthetic dataset from multiple PDFs - Image-heavy PDF.
-- `make_qa_only_image_pdf.ipynb`: Generate QnA synthetic dataset from a PDF - Image-heavy PDF.
+- `make_qa_multimodal_pdf_docai.ipynb`: （推奨）Azure AI Document Intelligenceを使用して複雑なPDFからQnA合成データセットを生成します。
+- `make_qa_multimodal_pdf_oss.ipynb`: オープンソース（このハンズオンのためのUnstructuredツールキット）を使用して複雑なPDFからQnA合成データセットを生成します。このファイルを実行するには、まず`startup_unstructured.sh`で必要なパッケージをインストールする必要があります。インストールには数分かかります。
+- `make_qa_only_image_multiple_pdf.ipynb`: 複数のPDFからQnA合成データセットを生成します - 画像が多いPDF。
+- `make_qa_only_image_pdf.ipynb`: 画像が多いPDFからQnA合成データセットを生成します。
 
 #### CSV
-- `make_qa_csv.ipynb`: This is the general case. It is not difficult to create a QnA dataset by reading and chunking with CSVLoader.
-- `make_qa_image_url_csv.ipynb`: This is another common case. If image url information is included, change this url to a summary result for that image.
+- `make_qa_csv.ipynb`: これは一般的なケースです。CSVLoaderを使用して読み込みとチャンク化を行うことで、QnAデータセットを作成するのは難しくありません。
+- `make_qa_image_url_csv.ipynb`: これはもう一つの一般的なケースです。画像URL情報が含まれている場合、そのURLをその画像の要約結果に変更します。
 
-### Stage 2. Data Augmentation (Optional)
-Leverage Microsoft's research to generate more high-quality and complex data. Once you have established a baseline in Stage 1, experiment with this step for even better results. By utilizing the concepts of Evolve-Instruct and GLAN, you can fine tune into your LLM specialized for a specific industry/technology domain.
+### ステージ2. データ拡張（オプション）
+Microsoftの研究を活用して、より高品質で複雑なデータを生成します。ステージ1でベースラインを確立したら、このステップを試してさらに良い結果を得ることができます。Evolve-InstructとGLANの概念を利用することで、特定の業界/技術分野に特化したLLMにファインチューニングすることができます。
 
 #### [Evolve-Instruct](evolve-instruct/README.md)
 
 ![diagram2](./imgs/diagram2.png)
 
-We can perform data augmentation based on the seed dataset created in Stage 1. Please see **[evolve-instruct/README](evolve-instruct/README.md)** for more details.
+ステージ1で作成したシードデータセットに基づいてデータ拡張を行うことができます。詳細は**[evolve-instruct/README](evolve-instruct/README.md)**をご覧ください。
 
-#### [GLAN (Generalized Instruction Tuning)](glan-instruct/README.md)
+#### [GLAN（Generalized Instruction Tuning）](glan-instruct/README.md)
 
 ![diagram3](./imgs/diagram3.png)
 
-GLAN can be performed independently without the need to go through Stage 1. This is because it covers all generalized domains. Please see **[glan-instruct/README](glan-instruct/README.md)** for more details.
+GLANはステージ1を経ることなく独立して実行できます。これはすべての一般化されたドメインをカバーしているためです。詳細は**[glan-instruct/README](glan-instruct/README.md)**をご覧ください。
 
-## How to get started 
-Any option is fine, but you may wish to refer to the instructions below:
-- For engineers or practitioners in the field who want to use this hands-on in PoC/MVP, we recommend Option 1.
-- For instructors who want to use this hands-on in their workshops, we recommend Option 2.
-- For developers in the field who want to launch a production, we recommend Option 3.
+## 始め方
+どのオプションでも構いませんが、以下の指示を参照してください：
+- PoC/MVPでこのハンズオンを使用したいエンジニアや実務者には、オプション1をお勧めします。
+- ワークショップでこのハンズオンを使用したいインストラクターには、オプション2をお勧めします。
+- プロダクションを立ち上げたいフィールドの開発者には、オプション3をお勧めします。
 
-### Option 1. Azure AI Studio or Azure ML Studio
-Create your compute instance. For code development, we recommend `Standard_DS11_v2` (2 cores, 14GB RAM, 28GB storage, No GPUs).
+### オプション1. Azure AI StudioまたはAzure ML Studio
+コンピュートインスタンスを作成します。コード開発には`Standard_DS11_v2`（2コア、14GB RAM、28GBストレージ、GPUなし）をお勧めします。
 
-If you want to use the Unstructured toolkit for processing a complex PDF, please be sure to include `startup_unstructured.sh` in your instance startup script.
+複雑なPDFを処理するためにUnstructuredツールキットを使用したい場合は、インスタンスのスタートアップスクリプトに`startup_unstructured.sh`を必ず含めてください。
 
-### Option 2. GitHub Codespace
-Please start a new project by connecting to Codespace Project. The environment required for hands-on is automatically configured through devcontainer, so you only need to run a Jupyter notebook.
+### オプション2. GitHub Codespace
+Codespaceプロジェクトに接続して新しいプロジェクトを開始します。ハンズオンに必要な環境はdevcontainerを通じて自動的に構成されるため、Jupyterノートブックを実行するだけです。
 
-### Option 3. Your local PC
-Please start by installing the required packages on your local PC with `pip install -r requirements.txt`
+### オプション3. ローカルPC
+ローカルPCに必要なパッケージを`pip install -r requirements.txt`でインストールして開始します。
 
-## References
+## 参考文献
 - Evolve-Instruct: https://arxiv.org/pdf/2304.12244
-- GLAN (Generalized Instruction Tuning): https://arxiv.org/pdf/2402.13064
+- GLAN（Generalized Instruction Tuning）: https://arxiv.org/pdf/2402.13064
 - Auto Evolve-Instruct: https://arxiv.org/pdf/2406.00770
 
-## Contributing
+## 貢献
 
-This project welcomes contributions and suggestions.  Most contributions require you to agree to a
-Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
-the rights to use your contribution. For details, visit https://cla.opensource.microsoft.com.
+このプロジェクトは貢献と提案を歓迎します。ほとんどの貢献には、貢献者ライセンス契約（CLA）に同意する必要があります。これにより、あなたが貢献する権利を持ち、実際に貢献を使用する権利を私たちに与えることを宣言します。詳細はhttps://cla.opensource.microsoft.comをご覧ください。
 
-When you submit a pull request, a CLA bot will automatically determine whether you need to provide
-a CLA and decorate the PR appropriately (e.g., status check, comment). Simply follow the instructions
-provided by the bot. You will only need to do this once across all repos using our CLA.
+プルリクエストを送信すると、CLAボットが自動的にCLAを提供する必要があるかどうかを判断し、適切にPRを装飾します（例：ステータスチェック、コメント）。ボットの指示に従うだけです。これは、すべてのリポジトリで一度だけ行う必要があります。
 
-This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
-For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
-contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+このプロジェクトは[Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/)を採用しています。詳細については[Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/)をご覧いただくか、[opencode@microsoft.com](mailto:opencode@microsoft.com)にお問い合わせください。
 
-## Trademarks
+## 商標
 
-This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft 
-trademarks or logos is subject to and must follow 
-[Microsoft's Trademark & Brand Guidelines](https://www.microsoft.com/en-us/legal/intellectualproperty/trademarks/usage/general).
-Use of Microsoft trademarks or logos in modified versions of this project must not cause confusion or imply Microsoft sponsorship.
-Any use of third-party trademarks or logos are subject to those third-party's policies.
+このプロジェクトには、プロジェクト、製品、またはサービスの商標やロゴが含まれている場合があります。Microsoftの商標やロゴの許可された使用は、[Microsoftの商標およびブランドガイドライン](https://www.microsoft.com/en-us/legal/intellectualproperty/trademarks/usage/general)に従う必要があります。このプロジェクトの変更バージョンでMicrosoftの商標やロゴを使用する場合、混乱を引き起こしたり、Microsoftのスポンサーシップを暗示したりしてはなりません。第三者の商標やロゴの使用は、それらの第三者のポリシーに従う必要があります。
 
-## License Summary
-This sample code is provided under the MIT-0 license. See the LICENSE file.
+## ライセンス概要
+このサンプルコードはMIT-0ライセンスの下で提供されています。詳細はLICENSEファイルをご覧ください。
